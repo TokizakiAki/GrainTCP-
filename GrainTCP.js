@@ -1,10 +1,6 @@
 import { connect } from 'cloudflare:sockets';
-
 const CFG = { id: '11451419-4373-ac9a-938303f67887', chunk: 64 * 1024, dnPack: 32 * 1024, dnTail: 512, dnMs: 0, upPack: 16 * 1024, upQMax: 256 * 1024, maxED: 8 * 1024, concur: 4 };
-// 请确保这里填写的是有效的域名，不要带 https://
-const r = '';//r填ProxyIP 
-
-//带重试机制的拨号逻辑
+const r = 'owo.o00o.ooo:443';
 const sprout = async (f, h, p, isRetry = false) => {
     const target = isRetry ? r : h;
     const s = f.connect({ hostname: target, port: p });
@@ -12,19 +8,16 @@ const sprout = async (f, h, p, isRetry = false) => {
         await s.opened;
         return s;
     } catch (e) {
-        if (!isRetry) return sprout(f, h, p, true); // 触发第一次失败后，重试走 ProxyIP
+        if (!isRetry) return sprout(f, h, p, true);
         throw e;
     }
 };
-
 const raceSprout = (f, h, p) => { 
     if (!f?.connect) return Promise.reject(new Error('connect unavailable')); 
     if (CFG.concur <= 1) return sprout(f, h, p); 
     const ts = Array(CFG.concur).fill().map(() => sprout(f, h, p)); 
     return Promise.any(ts).then(w => { ts.forEach(t => t.then(s => s !== w && s.close(), () => {})); return w; }); 
 };
-
-// --- 以下为 GrainTCP 原版核心功能 (保持不变) ---
 export default { fetch: req => req.headers.get('Upgrade')?.toLowerCase() === 'websocket' ? ws(req) : new Response('Hello world!') }; 
 const hex = c => (c > 64 ? c + 9 : c) & 0xF;
 const idB = new Uint8Array(16), dec = new TextDecoder(); for (let i = 0, p = 0, c, h; i < 16; i++) { c = CFG.id.charCodeAt(p++); c === 45 && (c = CFG.id.charCodeAt(p++)); h = hex(c); c = CFG.id.charCodeAt(p++); c === 45 && (c = CFG.id.charCodeAt(p++)); idB[i] = h << 4 | hex(c); }
