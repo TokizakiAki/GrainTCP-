@@ -61,5 +61,4 @@ const ws = async (req, env) => {
   server.addEventListener('message', e => { closed || (sow(e.data) && thresh()); });
   server.addEventListener('close', () => wither()); 
   server.addEventListener('error', () => wither());
-  return new Response(null, { status: 101, webSocket: client, headers: { 'Sec-WebSocket-Extensions': '' } }); 
-};
+  return new Response(null, { status: 101, webSocket: client, headers: { 'Sec-WebSocket-Extensions': '' } }); };
