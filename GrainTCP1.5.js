@@ -1,5 +1,5 @@
 import { connect } from 'cloudflare:sockets';
-const CFG = { id: '2523c510-9ff0-415b-9582-93949bfae7e3', chunk: 64 * 1024, dnPack: 32 * 1024, dnTail: 512, dnQr: 4, upPack: 20 * 1024, maxED: 8 * 1024, concur: 4 };
+const CFG = { id: 'edcebf5c-d302-4b7c-aa17-e89e3cf66a9d', chunk: 64 * 1024, dnPack: 32 * 1024, dnTail: 512, dnQr: 4, upPack: 20 * 1024, maxED: 8 * 1024, concur: 4 };
 export default { fetch: (req, env) => req.headers.get('Upgrade')?.toLowerCase() === 'websocket' ? ws(req, env) : new Response('Hello world!') }; 
 const hex = c => (c > 64 ? c + 9 : c) & 0xF;
 const idB = new Uint8Array(16), dec = new TextDecoder(); for (let i = 0, p = 0, c, h; i < 16; i++) { c = CFG.id.charCodeAt(p++); c === 45 && (c = CFG.id.charCodeAt(p++)); h = hex(c); c = CFG.id.charCodeAt(p++); c === 45 && (c = CFG.id.charCodeAt(p++)); idB[i] = h << 4 | hex(c); }
@@ -86,5 +86,4 @@ const ws = async (req, env) => {
   if (ed && sow(ed)) thresh();
   server.addEventListener('message', e => { closed || (sow(e.data) && thresh()); });
   server.addEventListener('close', () => wither()); server.addEventListener('error', () => wither());
-  return new Response(null, { status: 101, webSocket: client, headers: { 'Sec-WebSocket-Extensions': '' } }); 
-};
+  return new Response(null, { status: 101, webSocket: client, headers: { 'Sec-WebSocket-Extensions': '' } }); };
